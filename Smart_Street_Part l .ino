@@ -4,9 +4,9 @@ Servo lid;  // создание объекта серво (крышка мусо
 
 int lights = 11;  // фонари
 
-int ledR = 2; // красный для гаражных ворот
+int ledR = 6; // красный для гаражных ворот
 
-bool debug = false // режим отладки (по умолчанию "false")
+bool debug = false; // режим отладки (по умолчанию "false")
 
 int photorez = 0;  // датчик - фоторезистор (А0)
 int data_photorez = 0;  // данные с порта фоторезистора
@@ -28,6 +28,8 @@ void setup() {
 
   pinMode(photorez, 0);
 
+  pinMode(ledR, OUTPUT);
+
   pinMode(lights, 1);
 
   garage.attach(10);
@@ -47,9 +49,9 @@ void Osveshenie() { // управление освещением
 void Garage() { // управление гаражными воротами
   if (data_IR_button_Garage == 1) { // если ИК-датчик принял данные (увидел отражение своего сигнала)
     last_time_garage = millis(); // обнулить таймер для гаража
+    digitalWrite(ledR, LOW); // включить предупредительный светодиод
 
     if (millis()-last_time_garage < 5000) { // если таймер для гаража < 5000 мл.сек.
-      digitalWrite(ledR, 1); // включить предупредительный светодиод
       garage.write(180); // установить серво в положение 180 градусов
     }
   }
@@ -84,6 +86,8 @@ void loop()  {
  
   data_IR_button_Lid = digitalRead(IR_button_Lid); // считываем сигнал с цифрового выхода (ИК-датчик крышки бака)
   data_IR_button_Garage = digitalRead(IR_button_Garage); // считываем сигнал с цифрового выхода (ИК-датчик гаража)
+
+  digitalWrite(ledR, HIGH);
 
   if (debug == true) { // выводим данные ИК на монитор ПК (если включен режим отладки)
     Serial.print("kasanie Garage: ");
